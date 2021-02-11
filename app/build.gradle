@@ -68,4 +68,7 @@ dependencies {
     // Testing
     androidTestImplementation 'androidx.test:runner:1.2.0'
 
+    // Internet
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+
 }

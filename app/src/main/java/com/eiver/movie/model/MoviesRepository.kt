@@ -15,14 +15,18 @@ import retrofit2.converter.gson.GsonConverterFactory
 
     init {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.themoviedb.org/discover/movie?sort_by=popularity.desc")
+            .baseUrl("https://api.themoviedb.org/3/movie/550/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         api = retrofit.create(Api::class.java)
     }
 
-    fun getPopularMovies(page: Int = 1) {
+    fun getPopularMovies(
+                         page: Int = 1,
+                         onSuccess: (movies: List<Movie>) -> Unit,
+                         onError: () -> Unit
+    ) {
         api.getPopularMovies(page = page)
             .enqueue(object : Callback<GetMoviesResponse> {
                 override fun onResponse(
@@ -33,15 +37,17 @@ import retrofit2.converter.gson.GsonConverterFactory
                         val responseBody = response.body()
 
                         if (responseBody != null) {
-                            Log.d("Repository", "Movies: ${responseBody.movies}")
+                            onSuccess.invoke(responseBody.movies)
                         } else {
-                            Log.d("Repository", "Failed to get response")
+                            onError.invoke()
                         }
+                    } else {
+                        onError.invoke()
                     }
                 }
 
                 override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
-                    Log.e("Repository", "onFailure", t)
+                    onError.invoke()
                 }
             })
     }
