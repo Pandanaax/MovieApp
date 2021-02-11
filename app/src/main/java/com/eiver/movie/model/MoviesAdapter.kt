@@ -12,7 +12,7 @@ import com.eiver.movie.R
 /*
 * Create by Randa {DATE}
 */class MoviesAdapter(
-    private var movies: List<Movie>
+    private var movies: MutableList<Movie>
 ) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
@@ -20,6 +20,13 @@ import com.eiver.movie.R
             .from(parent.context)
             .inflate(R.layout.item_movie, parent, false)
         return MovieViewHolder(view)
+    }
+    fun appendMovies(movies: List<Movie>) {
+        this.movies.addAll(movies)
+        notifyItemRangeInserted(
+            this.movies.size,
+            movies.size - 1
+        )
     }
 
     override fun getItemCount(): Int = movies.size
@@ -29,7 +36,7 @@ import com.eiver.movie.R
     }
 
     fun updateMovies(movies: List<Movie>) {
-        this.movies = movies
+        this.movies = movies as MutableList<Movie>
         notifyDataSetChanged()
     }
 
@@ -44,4 +51,5 @@ import com.eiver.movie.R
                 .into(poster)
         }
     }
+
 }

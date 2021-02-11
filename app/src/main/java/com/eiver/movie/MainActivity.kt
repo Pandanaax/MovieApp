@@ -3,71 +3,89 @@ package com.eiver.movie
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
+import android.widget.RatingBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.eiver.movie.model.Movie
 import com.eiver.movie.model.MoviesAdapter
 import com.eiver.movie.model.MoviesRepository
-import com.eiver.movie.network.ConnectionType
-import com.eiver.movie.network.NetworkMonitorUtil
 
 class MainActivity : AppCompatActivity() {
     private lateinit var popularMovies: RecyclerView
     private lateinit var popularMoviesAdapter: MoviesAdapter
-    private val networkMonitor = NetworkMonitorUtil(this)
+    private lateinit var popularMoviesLayoutMgr: LinearLayoutManager
+    private lateinit var backdrop: ImageView
+    private lateinit var poster: ImageView
+    private lateinit var title: TextView
+    private lateinit var rating: RatingBar
+    private lateinit var releaseDate: TextView
+    private lateinit var overview: TextView
+
+    private var popularMoviesPage = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         popularMovies = findViewById(R.id.popular_movies)
-        popularMovies.layoutManager = LinearLayoutManager(
+        popularMoviesLayoutMgr = LinearLayoutManager(
             this,
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        popularMoviesAdapter = MoviesAdapter(listOf())
+        title = findViewById(R.id.movie_title)
+        releaseDate = findViewById(R.id.movie_release_date)
+        overview = findViewById(R.id.movie_overview)
+        popularMovies.layoutManager = popularMoviesLayoutMgr
+        popularMoviesAdapter = MoviesAdapter(mutableListOf())
         popularMovies.adapter = popularMoviesAdapter
 
+
+        getPopularMovies()
+
         MoviesRepository.getPopularMovies(
-            onSuccess = ::onPopularMoviesFetched,
-            onError = ::onError
+            popularMoviesPage,
+            ::onPopularMoviesFetched,
+            ::onError
         )
 
-        networkMonitor.result = { isAvailable, type ->
-            runOnUiThread {
-                when (isAvailable) {
-                    true -> {
-                        when (type) {
-                            ConnectionType.Wifi -> {
-                                Log.i("NETWORK_MONITOR_STATUS", "Wifi Connection")
-                            }
-                            ConnectionType.Cellular -> {
-                                Log.i("NETWORK_MONITOR_STATUS", "Cellular Connection")
-                            }
-                            else -> { }
-                        }
-                    }
-                    false -> {
-                        Log.i("NETWORK_MONITOR_STATUS", "No Connection")
-                    }
-                }
-            }
-        }
 
-    }
-
-    private fun onPopularMoviesFetched(movies: List<Movie>) {
-        popularMoviesAdapter.updateMovies(movies)
     }
 
     private fun onError() {
         Toast.makeText(this, getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
     }
+    private fun getPopularMovies() {
+        MoviesRepository.getPopularMovies(
+            popularMoviesPage,
+            ::onPopularMoviesFetched,
+            ::onError
+        )
+    }
 
-    override fun onResume() {
-        super.onResume()
-        networkMonitor.register()
+    private fun onPopularMoviesFetched(movies: List<Movie>) {
+        popularMoviesAdapter.appendMovies(movies)
+        attachPopularMoviesOnScrollListener()
+    }
+
+    private fun attachPopularMoviesOnScrollListener() {
+        popularMovies.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val totalItemCount = popularMoviesLayoutMgr.itemCount
+                val visibleItemCount = popularMoviesLayoutMgr.childCount
+                val firstVisibleItem = popularMoviesLayoutMgr.findFirstVisibleItemPosition()
+
+                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                    popularMovies.removeOnScrollListener(this)
+                    popularMoviesPage++
+                    getPopularMovies()
+                }
+            }
+
+        })
+
     }
 }

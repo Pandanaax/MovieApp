@@ -17,14 +17,17 @@ android {
     }
 
     buildTypes {
-        release {
+        release {/*
+            shrinkResources false
+            zipAlignEnabled true
+            debuggable true*/
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    buildFeatures{
+    /*buildFeatures{
         viewBinding true
-    }
+    }*/
 }
 
 dependencies {
@@ -68,7 +71,5 @@ dependencies {
     // Testing
     androidTestImplementation 'androidx.test:runner:1.2.0'
 
-    // Internet
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 
 }
