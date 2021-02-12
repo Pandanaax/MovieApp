@@ -45,6 +45,7 @@ dependencies {
     // Kotlin
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+
     // Support
     // https://developer.android.com/jetpack/androidx/versions
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
@@ -53,6 +54,9 @@ dependencies {
     // ViewModel and LiveData
     // https://developer.android.com/jetpack/androidx/releases/lifecycle
     implementation "androidx.lifecycle:lifecycle-extensions:2.1.0"
+
+    //noinspection GradleCompatible
+    implementation 'com.android.support:cardview-v7:26.1.0'
 
     // Retrofit
     // https://github.com/square/retrofit
