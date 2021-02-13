@@ -75,5 +75,6 @@ dependencies {
     // Testing
     androidTestImplementation 'androidx.test:runner:1.2.0'
 
-
+    //Search
+    implementation 'com.google.android.material:material:1.2.0-alpha02'
 }

@@ -49,6 +49,8 @@ class MoviesAdapter(
 
         val poster: ImageView = itemView.findViewById(R.id.movie_poster)
         var title: TextView = itemView.findViewById(R.id.movie_title)
+        val dateRealease: TextView = itemView.findViewById(R.id.movie_release_date_first)
+        val overview: TextView = itemView.findViewById(R.id.movie_overview_first)
         val MOVIE_TITLE = "movie_title"
 
 
@@ -61,6 +63,9 @@ class MoviesAdapter(
         }
          fun populateDetails(movie: Movie) {
             title.text = movie.title
+             dateRealease.text = movie.releaseDate
+             overview.text = movie.overview
+
         }
 
 

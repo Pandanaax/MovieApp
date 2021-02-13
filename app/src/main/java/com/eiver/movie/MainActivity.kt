@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,14 +27,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var topRatedMovies: RecyclerView
     private lateinit var topRatedMoviesAdapter: MoviesAdapter
     private lateinit var topRatedMoviesLayoutMgr: LinearLayoutManager
-    private lateinit var upcomingMovies: RecyclerView
-    private lateinit var upcomingMoviesAdapter: MoviesAdapter
-    private lateinit var upcomingMoviesLayoutMgr: LinearLayoutManager
-    private lateinit var title: TextView
-    private lateinit var rating: RatingBar
-    private lateinit var releaseDate: TextView
-    private lateinit var overview: TextView
-    private var upcomingMoviesPage = 1
     private var popularMoviesPage = 1
     private var topRatedMoviesPage = 1
 
@@ -67,23 +60,11 @@ class MainActivity : AppCompatActivity() {
         topRatedMoviesAdapter = MoviesAdapter(mutableListOf()) { movie -> showMovieDetails(movie) }
         topRatedMovies.adapter = topRatedMoviesAdapter
 
-        upcomingMovies = findViewById(R.id.upcoming_movies)
-        upcomingMoviesLayoutMgr = LinearLayoutManager(
-            this,
-            LinearLayoutManager.HORIZONTAL,
-            false
-        )
-        upcomingMovies.layoutManager = upcomingMoviesLayoutMgr
-        upcomingMoviesAdapter = MoviesAdapter(mutableListOf()) { movie -> showMovieDetails(movie) }
-        upcomingMovies.adapter = upcomingMoviesAdapter
-
         getPopularMovies()
         getTopRatedMovies()
-        getUpcomingMovies()
 
     }
-
-
+    
     private fun onError() {
         Toast.makeText(this, getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
     }
@@ -140,36 +121,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
-    private fun getUpcomingMovies() {
-        MoviesRepository.getUpcomingMovies(
-            upcomingMoviesPage,
-            ::onUpcomingMoviesFetched,
-            ::onError
-        )
-    }
-
-    private fun attachUpcomingMoviesOnScrollListener() {
-        upcomingMovies.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val totalItemCount = upcomingMoviesLayoutMgr.itemCount
-                val visibleItemCount = upcomingMoviesLayoutMgr.childCount
-                val firstVisibleItem = upcomingMoviesLayoutMgr.findFirstVisibleItemPosition()
-
-                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                    upcomingMovies.removeOnScrollListener(this)
-                    upcomingMoviesPage++
-                    getUpcomingMovies()
-                }
-            }
-        })
-    }
-
-    private fun onUpcomingMoviesFetched(movies: List<Movie>) {
-        upcomingMoviesAdapter.appendMovies(movies)
-        attachUpcomingMoviesOnScrollListener()
-    }
-
 
     private fun onTopRatedMoviesFetched(movies: List<Movie>) {
         topRatedMoviesAdapter.appendMovies(movies)
