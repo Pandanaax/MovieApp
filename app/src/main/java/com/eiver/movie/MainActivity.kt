@@ -8,10 +8,16 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.eiver.movie.model.Movie
 import com.eiver.movie.model.MoviesAdapter
 import com.eiver.movie.model.MoviesRepository
 
+const val MOVIE_TITLE_FIRST = "extra_movie_title"
+const val MOVIE_RATING_FIRST  = "extra_movie_rating"
+const val MOVIE_RELEASE_DATE_FIRST  = "extra_movie_release_date"
+const val MOVIE_OVERVIEW_FIRST  = "extra_movie_overview"
 class MainActivity : AppCompatActivity() {
 
     private lateinit var popularMovies: RecyclerView
@@ -23,7 +29,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var upcomingMovies: RecyclerView
     private lateinit var upcomingMoviesAdapter: MoviesAdapter
     private lateinit var upcomingMoviesLayoutMgr: LinearLayoutManager
-
+    private lateinit var title: TextView
+    private lateinit var rating: RatingBar
+    private lateinit var releaseDate: TextView
+    private lateinit var overview: TextView
     private var upcomingMoviesPage = 1
     private var popularMoviesPage = 1
     private var topRatedMoviesPage = 1
@@ -71,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         getPopularMovies()
         getTopRatedMovies()
         getUpcomingMovies()
+
     }
 
 
@@ -175,4 +185,5 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra(MOVIE_OVERVIEW, movie.overview)
         startActivity(intent)
     }
+
 }
