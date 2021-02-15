@@ -1,4 +1,4 @@
-package com.eiver.movie.model
+package com.eiver.movie.model.Movie
 
 import com.google.gson.annotations.SerializedName
 

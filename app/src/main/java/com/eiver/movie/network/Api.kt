@@ -1,6 +1,7 @@
-package com.eiver.movie.api
+package com.eiver.movie.network
 
-import com.eiver.movie.model.GetMoviesResponse
+import com.eiver.movie.model.Movie.GetMoviesResponse
+import com.eiver.movie.model.Trailer.GetTrailerResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -22,9 +23,10 @@ interface Api {
         @Query("page") page: Int
     ): Call<GetMoviesResponse>
 
-    @GET("movie/upcoming")
-    fun getUpcomingMovies(
+    @GET("/movie/{movie_id}/videos")
+    fun getTrailerMovies(
         @Query("api_key") apiKey: String = "05c8d1167eb969eb35bfb3bf9bc86315",
         @Query("page") page: Int
-    ): Call<GetMoviesResponse>
+    ): Call<GetTrailerResponse>
+
 }

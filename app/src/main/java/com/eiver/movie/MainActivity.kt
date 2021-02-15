@@ -1,23 +1,18 @@
 package com.eiver.movie
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.*
-import androidx.cardview.widget.CardView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.eiver.movie.model.Movie
-import com.eiver.movie.model.MoviesAdapter
-import com.eiver.movie.model.MoviesRepository
+import com.eiver.movie.model.Movie.Movie
+import com.eiver.movie.model.Movie.MoviesAdapter
+import com.eiver.movie.model.Movie.MoviesRepository
 
-const val MOVIE_TITLE_FIRST = "extra_movie_title"
-const val MOVIE_RATING_FIRST  = "extra_movie_rating"
-const val MOVIE_RELEASE_DATE_FIRST  = "extra_movie_release_date"
-const val MOVIE_OVERVIEW_FIRST  = "extra_movie_overview"
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var popularMovies: RecyclerView
@@ -26,9 +21,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var topRatedMovies: RecyclerView
     private lateinit var topRatedMoviesAdapter: MoviesAdapter
     private lateinit var topRatedMoviesLayoutMgr: LinearLayoutManager
+    private lateinit var searchView: SearchView
     private var popularMoviesPage = 1
     private var topRatedMoviesPage = 1
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,14 +36,9 @@ class MainActivity : AppCompatActivity() {
             false
         )
         popularMovies.layoutManager = popularMoviesLayoutMgr
-        popularMoviesAdapter =  MoviesAdapter(mutableListOf()) { movie -> showMovieDetails(movie) }
+        popularMoviesAdapter = MoviesAdapter(mutableListOf()) { movie -> showMovieDetails(movie) }
         popularMovies.adapter = popularMoviesAdapter
 
-        MoviesRepository.getPopularMovies(
-            popularMoviesPage,
-            ::onPopularMoviesFetched,
-            ::onError
-        )
         topRatedMovies = findViewById(R.id.top_rated_movies)
         topRatedMoviesLayoutMgr = LinearLayoutManager(
             this,
@@ -59,15 +49,56 @@ class MainActivity : AppCompatActivity() {
         topRatedMoviesAdapter = MoviesAdapter(mutableListOf()) { movie -> showMovieDetails(movie) }
         topRatedMovies.adapter = topRatedMoviesAdapter
 
+
+
+        searchView = findViewById(R.id.searchView)
+        val movieFilter = listOf(R.id.menu)
+        var adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, movieFilter)
+
         getPopularMovies()
         getTopRatedMovies()
 
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                adapter.filter.filter(p0)
+                return false
+            }
+        })
     }
 
+
+    // Menu
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.getItemId()) {
+            R.id.shortcut -> {
+                showSortMenu()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun showSortMenu() {
+        val sortMenu = PopupMenu(this, findViewById(R.id.shortcut))
+        sortMenu.inflate(R.menu.menu_movies_sort)
+        sortMenu.show()
+    }
 
     private fun onError() {
         Toast.makeText(this, getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
     }
+
+
+    // PopularMovie
     private fun getPopularMovies() {
         MoviesRepository.getPopularMovies(
             popularMoviesPage,
@@ -98,6 +129,8 @@ class MainActivity : AppCompatActivity() {
         })
 
     }
+
+    // TopMovie
     private fun getTopRatedMovies() {
         MoviesRepository.getTopRatedMovies(
             topRatedMoviesPage,
@@ -126,6 +159,8 @@ class MainActivity : AppCompatActivity() {
         topRatedMoviesAdapter.appendMovies(movies)
         attachTopRatedMoviesOnScrollListener()
     }
+
+    // ShowMovie
     private fun showMovieDetails(movie: Movie) {
         val intent = Intent(this, MovieDetailsActivity::class.java)
         intent.putExtra(MOVIE_BACKDROP, movie.backdropPath)
@@ -134,7 +169,10 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra(MOVIE_RATING, movie.rating)
         intent.putExtra(MOVIE_RELEASE_DATE, movie.releaseDate)
         intent.putExtra(MOVIE_OVERVIEW, movie.overview)
+        intent.putExtra(MOVIE_ID, movie.id)
         startActivity(intent)
     }
+
+
 
 }

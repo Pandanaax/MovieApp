@@ -1,13 +1,10 @@
-package com.eiver.movie.model
+package com.eiver.movie.model.Movie
 
-import android.provider.Settings.Global.getString
-import android.provider.Settings.Secure.getString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.res.TypedArrayUtils.getString
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -51,7 +48,6 @@ class MoviesAdapter(
         var title: TextView = itemView.findViewById(R.id.movie_title)
         val dateRealease: TextView = itemView.findViewById(R.id.movie_release_date_first)
         val overview: TextView = itemView.findViewById(R.id.movie_overview_first)
-        val MOVIE_TITLE = "movie_title"
 
 
         fun bind(movie: Movie) {
@@ -61,14 +57,15 @@ class MoviesAdapter(
                 .into(poster)
             itemView.setOnClickListener { onMovieClick.invoke(movie) }
         }
-         fun populateDetails(movie: Movie) {
-            title.text = movie.title
-             dateRealease.text = movie.releaseDate
-             overview.text = movie.overview
 
+        fun populateDetails(movie: Movie) {
+            title.text = movie.title
+            dateRealease.text = movie.releaseDate
+            overview.text = movie.overview
         }
 
-
     }
+
 }
+
 

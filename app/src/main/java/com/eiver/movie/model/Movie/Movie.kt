@@ -1,4 +1,4 @@
-package com.eiver.movie.model
+package com.eiver.movie.model.Movie
 
 import com.google.gson.annotations.SerializedName
 
@@ -14,6 +14,6 @@ data class Movie(
     @SerializedName("backdrop_path") val backdropPath: String,
     @SerializedName("vote_average") val rating: Float,
     @SerializedName("release_date") val releaseDate: String,
-    @SerializedName("movie_poster") val moviePoster: String
+    @SerializedName("movie_poster") val moviePoster: String,
 )
 

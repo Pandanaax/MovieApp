@@ -1,4 +1,6 @@
-package com.eiver.movie.model
+package com.eiver.movie.model.Movie
+
+import com.eiver.movie.model.Movie.Movie
 
 /*
 * Create by Randa {DATE}
